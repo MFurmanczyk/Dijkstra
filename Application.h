@@ -6,6 +6,7 @@
 #define EDURITHM_DIJKSTRA_APPLICATION_H
 
 #include "SFML/Graphics/RenderWindow.hpp"
+#include "Managers/MouseManager.h"
 
 enum class State
 {
@@ -16,12 +17,17 @@ enum class State
 };
 
 
-class Application {
+class Application final
+{
 
 public:
 
     void run();
     void initialize(unsigned _width, unsigned _height, const std::string& _name, unsigned _frameRate);
+    //inline sf::RenderWindow& getWindow() { return m_window; } //bad idea
+
+    void leftClick(sf::Vector2i& position);
+    void rightClick(sf::Vector2i& position);
 
 public:
     ~Application();
@@ -35,12 +41,12 @@ public:
 
 private:
     Application();
-    void updateState();
+    void processEvents();
 
 private:
     State                       m_currentState;
+    MouseManager                m_mouseManager;
     sf::RenderWindow            m_window;			// Application's window.
-    //std::shared_ptr<GLevel>   m_level;		// Current level
 
 };
 

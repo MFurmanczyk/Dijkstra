@@ -14,7 +14,10 @@ FetchContent_MakeAvailable(SFML)
 
 add_executable(edurithm_dijkstra main.cpp
         Application.cpp
-        Application.h)
+        Application.h
+        Managers/MouseManager.cpp
+        Managers/MouseManager.h
+        )
 target_link_libraries(edurithm_dijkstra PRIVATE sfml-graphics)
 target_compile_features(edurithm_dijkstra PRIVATE cxx_std_17)
 
