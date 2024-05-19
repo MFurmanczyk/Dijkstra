@@ -3,15 +3,17 @@
 //
 
 #include "Application.h"
-#include <iostream>
 #include "SFML/Window/Event.hpp"
 #include "SFML/Graphics/VertexArray.hpp"
+#include "Framework/Level/Points/PointBase.h"
+#include "Framework/Level/Points/DestinationPoint.h"
+#include <iostream>
 
 Application::Application() :
         m_currentState(State::Idle)
         {}
 
-void Application::initialize(unsigned _width, unsigned _height, const std::string& _name, unsigned _frameRate)
+void Application::initialize(unsigned _size, const std::string& _name, unsigned _frameRate)
 {
     if(m_currentState != State::Idle)
     {
@@ -19,8 +21,13 @@ void Application::initialize(unsigned _width, unsigned _height, const std::strin
     }
 
     m_currentState = State::Initializing;
-    m_window.create(sf::VideoMode(_width, _height), _name);
+
+    //setup window
+    m_window.create(sf::VideoMode(_size, _size), _name);
     m_window.setFramerateLimit(_frameRate);
+
+    //load level from file (map and graph)
+    m_level.loadFromFile("/Users/maciejfurmanczyk/Documents/EduRithm/edurithm-dijkstra/Resources/level1.lvl", m_window.getSize());
 
 }
 
@@ -29,15 +36,19 @@ void Application::run()
     if(m_currentState != State::Initializing) throw std::exception();
     m_currentState = State::Running;
 
+    sf::Clock clock;
+    float deltaTime = 1/60.f;
     while (m_currentState == State::Running)
     {
+        float frameStart = clock.getElapsedTime().asSeconds();
         processEvents();
-
         m_window.clear();
 
-
+        m_level.update(deltaTime);
+        m_level.draw(m_window);
 
         m_window.display();
+        deltaTime = clock.getElapsedTime().asSeconds() - frameStart;
     }
 }
 
@@ -49,6 +60,7 @@ void Application::processEvents()
         if(event.type == sf::Event::KeyPressed)
         {
             //process keyboard event
+            m_keyboardManager.invokeMapping(event.key);
         }
         else if(event.type == sf::Event::MouseButtonPressed)
         {
@@ -71,12 +83,18 @@ Application::~Application()
     }
 }
 
-void Application::leftClick(sf::Vector2i &position)
+void Application::leftClick(sf::Vector2i& _position)
 {
-    std::cout << "mouse x: " << position.x << ", mouse y:" << position.y << std::endl;
+    auto point = Level::spawnActor<DestinationPoint>(m_level, _position);
+
 }
 
-void Application::rightClick(sf::Vector2i &position)
+void Application::rightClick(sf::Vector2i& _position)
 {
-    std::cout << "mouse x: " << position.x << ", mouse y:" << position.y << std::endl;
+    m_level.resetDestinationPoints();
+}
+
+void Application::closeApplication()
+{
+    m_currentState = State::Ended;
 }

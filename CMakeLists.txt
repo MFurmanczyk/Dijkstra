@@ -15,9 +15,27 @@ FetchContent_MakeAvailable(SFML)
 add_executable(edurithm_dijkstra main.cpp
         Application.cpp
         Application.h
-        Managers/MouseManager.cpp
-        Managers/MouseManager.h
-        )
+        Framework/Managers/MouseManager.cpp
+        Framework/Managers/MouseManager.h
+        Framework/Level/Level.cpp
+        Framework/Level/Level.h
+        Framework/Level/Actor.cpp
+        Framework/Level/Actor.h
+        Framework/Level/Points/PointBase.h
+        Framework/Level/Points/PointBase.cpp
+        Framework/Level/Tiles/GrassTile.cpp
+        Framework/Level/Tiles/GrassTile.h
+        Framework/Level/Tiles/RoadTile.cpp
+        Framework/Level/Tiles/RoadTile.h
+        Framework/Level/Tiles/TileBase.cpp
+        Framework/Level/Tiles/TileBase.h
+        Framework/Level/Points/DestinationPoint.cpp
+        Framework/Level/Points/DestinationPoint.h
+        Framework/Level/Points/GraphPoint.cpp
+        Framework/Level/Points/GraphPoint.h
+        Framework/Managers/KeyboardManager.cpp
+        Framework/Managers/KeyboardManager.h
+)
 target_link_libraries(edurithm_dijkstra PRIVATE sfml-graphics)
 target_compile_features(edurithm_dijkstra PRIVATE cxx_std_17)
 
