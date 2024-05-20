@@ -19,7 +19,6 @@ struct Vertex
     sf::Vector2f                    m_coords;
 };
 
-
 struct WeightedEdge
 {
     WeightedEdge(Vertex _from, Vertex _to)

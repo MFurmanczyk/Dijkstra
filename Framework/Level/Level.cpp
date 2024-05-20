@@ -6,6 +6,7 @@
 #include "Tiles/GrassTile.h"
 #include "Tiles/RoadTile.h"
 #include "Points/DestinationPoint.h"
+#include "Path.h"
 #include <fstream>
 #include <sstream>
 
@@ -63,7 +64,7 @@ void Level::loadConnections(const std::string &_connectionFilename) {
             int destVertexId;
             while(ss >> destVertexId) //single connection
             {
-                m_graph.addEdge(vertexId, destVertexId);
+                m_graph.addEdge(vertexId, destVertexId - 1);
             }
             vertexId++;
         }
