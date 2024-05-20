@@ -51,8 +51,8 @@ public:
     unsigned indegree(int _id) const;
     unsigned outdegree(int _id) const;
 
-    std::vector<Vertex>& getVertices();
-    std::vector<WeightedEdge>& getEdges(int _id);
+    std::vector<Vertex> getVertices();
+    std::vector<WeightedEdge> getEdges(int _id);
 
 private:
 
@@ -60,9 +60,9 @@ private:
 
 private:
 
-    mutable std::vector<Vertex>                     m_vertices;
-    mutable std::vector<std::vector<WeightedEdge>>  m_edges;
-    std::vector<int>                                m_indegree;
+    std::vector<Vertex>                     m_vertices;
+    std::vector<std::vector<WeightedEdge>>  m_edges;
+    std::vector<int>                        m_indegree;
 };
 
 

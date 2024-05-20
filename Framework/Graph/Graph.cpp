@@ -56,11 +56,11 @@ unsigned Graph::outdegree(int _id) const
     return m_edges[_id].size();
 }
 
-std::vector<Vertex>& Graph::getVertices() {
+std::vector<Vertex> Graph::getVertices() {
     return m_vertices;
 }
 
-std::vector<WeightedEdge>& Graph::getEdges(int _id)
+std::vector<WeightedEdge> Graph::getEdges(int _id)
 {
     if(isValidVertex(_id)) return m_edges[_id];
     throw std::invalid_argument("Vertex with given _id does not exist.");

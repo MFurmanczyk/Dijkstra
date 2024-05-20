@@ -6,7 +6,6 @@
 #include "Tiles/GrassTile.h"
 #include "Tiles/RoadTile.h"
 #include "Points/DestinationPoint.h"
-#include "Path.h"
 #include <fstream>
 #include <sstream>
 
