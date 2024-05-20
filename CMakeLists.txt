@@ -35,6 +35,10 @@ add_executable(edurithm_dijkstra main.cpp
         Framework/Level/Points/GraphPoint.h
         Framework/Managers/KeyboardManager.cpp
         Framework/Managers/KeyboardManager.h
+        Framework/Graph/Graph.cpp
+        Framework/Graph/Graph.h
+        Framework/Level/Path.cpp
+        Framework/Level/Path.h
 )
 target_link_libraries(edurithm_dijkstra PRIVATE sfml-graphics)
 target_compile_features(edurithm_dijkstra PRIVATE cxx_std_17)

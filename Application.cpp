@@ -5,7 +5,6 @@
 #include "Application.h"
 #include "SFML/Window/Event.hpp"
 #include "SFML/Graphics/VertexArray.hpp"
-#include "Framework/Level/Points/PointBase.h"
 #include "Framework/Level/Points/DestinationPoint.h"
 #include <iostream>
 
@@ -27,7 +26,10 @@ void Application::initialize(unsigned _size, const std::string& _name, unsigned 
     m_window.setFramerateLimit(_frameRate);
 
     //load level from file (map and graph)
-    m_level.loadFromFile("/Users/maciejfurmanczyk/Documents/EduRithm/edurithm-dijkstra/Resources/level1.lvl", m_window.getSize());
+    m_level.loadFromFile(
+            "../../Resources/level1.lvl",
+            "../../Resources/level1.graph",
+            m_window.getSize());
 
 }
 
@@ -37,7 +39,7 @@ void Application::run()
     m_currentState = State::Running;
 
     sf::Clock clock;
-    float deltaTime = 1/60.f;
+    float deltaTime = 1/30.f;
     while (m_currentState == State::Running)
     {
         float frameStart = clock.getElapsedTime().asSeconds();
@@ -85,8 +87,8 @@ Application::~Application()
 
 void Application::leftClick(sf::Vector2i& _position)
 {
-    auto point = Level::spawnActor<DestinationPoint>(m_level, _position);
-
+    sf::Vector2f positionF(_position);
+    auto point = Level::spawnActor<DestinationPoint>(m_level, positionF);
 }
 
 void Application::rightClick(sf::Vector2i& _position)
