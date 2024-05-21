@@ -4,11 +4,6 @@
 
 #include "Graph.h"
 
-Graph::Graph()
-{
-
-}
-
 void Graph::addVertex(sf::Vector2f _coords)
 {
     Vertex v(_coords);
@@ -24,13 +19,23 @@ void Graph::addEdge(int _from, int _to)
         Vertex from =   m_vertices[_from];
         Vertex to =     m_vertices[_to];
 
-        WeightedEdge edge(from, to);
+        float weight = std::sqrt(
+                std::pow(from.m_coords.x - to.m_coords.x, 2) +
+                std::pow(from.m_coords.y - to.m_coords.y, 2)
+        );
+
+        WeightedEdge edge(_from, _to, weight);
         m_edges[_from].push_back(edge);
         m_indegree[_to]++;
     }
+    else
+    {
+        throw std::invalid_argument("One of the vertices does not exist.");
+    }
 }
 
-unsigned Graph::verticesCount() {
+unsigned Graph::verticesCount()
+{
     return m_vertices.size();
 }
 
@@ -46,21 +51,22 @@ unsigned Graph::edgesCount()
 
 unsigned Graph::indegree(int _id) const
 {
-    if(!isValidVertex(_id)) return 0;
+    if(!isValidVertex(_id)) throw std::invalid_argument("Vertex with given _id does not exist.");
     return m_indegree[_id];
 }
 
 unsigned Graph::outdegree(int _id) const
 {
-    if(!isValidVertex(_id)) return 0;
+    if(!isValidVertex(_id)) throw std::invalid_argument("Vertex with given _id does not exist.");
     return m_edges[_id].size();
 }
 
-std::vector<Vertex> Graph::getVertices() {
+std::vector<Vertex> Graph::getVertices()
+{
     return m_vertices;
 }
 
-std::vector<WeightedEdge> Graph::getEdges(int _id)
+std::list<WeightedEdge> Graph::getEdges(int _id)
 {
     if(isValidVertex(_id)) return m_edges[_id];
     throw std::invalid_argument("Vertex with given _id does not exist.");

@@ -35,8 +35,8 @@ add_executable(edurithm_dijkstra main.cpp
         Framework/Level/Points/GraphPoint.h
         Framework/Managers/KeyboardManager.cpp
         Framework/Managers/KeyboardManager.h
-        Framework/Graph/Graph.cpp
-        Framework/Graph/Graph.h
+        Framework/Algorithm/Graph.cpp
+        Framework/Algorithm/Graph.h
         Framework/Level/Path.cpp
         Framework/Level/Path.h
 )
