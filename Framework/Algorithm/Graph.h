@@ -22,11 +22,37 @@ struct Vertex
 
 struct WeightedEdge
 {
+    WeightedEdge() = default;
     WeightedEdge(int _fromId, int _toId, float _weight) :
         m_from(_fromId),
         m_to(_toId)
     {
         m_weight = _weight;
+    };
+
+    bool operator<(WeightedEdge const& _other) const
+    {
+        return this->m_weight < _other.m_weight;
+    };
+
+    bool operator>(WeightedEdge const& _other) const
+    {
+        return this->m_weight > _other.m_weight;
+    };
+
+    bool operator==(WeightedEdge const& _other) const
+    {
+        return this->m_weight == _other.m_weight;
+    };
+
+    bool operator>=(WeightedEdge const& _other) const
+    {
+        return this->m_weight >= _other.m_weight;
+    };
+
+    bool operator<=(WeightedEdge const& _other) const
+    {
+        return this->m_weight <= _other.m_weight;
     };
 
     int         m_from;
@@ -69,6 +95,5 @@ private:
     std::vector<std::list<WeightedEdge>>    m_edges;
     std::vector<int>                        m_indegree;
 };
-
 
 #endif //EDURITHM_DIJKSTRA_GRAPH_H

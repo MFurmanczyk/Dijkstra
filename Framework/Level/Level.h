@@ -9,7 +9,7 @@
 #include <memory>
 #include <type_traits>
 #include "Actor.h"
-#include "../Graph/Graph.h"
+#include "../Algorithm/Graph.h"
 
 /**
  * This class is responsible for storing and managing all object visible on the screen.
