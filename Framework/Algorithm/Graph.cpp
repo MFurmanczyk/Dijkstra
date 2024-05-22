@@ -30,16 +30,16 @@ void Graph::addEdge(int _from, int _to)
     }
     else
     {
-        throw std::invalid_argument("One of the vertices does not exist.");
+        throw std::invalid_argument("addEdge: One of the vertices does not exist.");
     }
 }
 
-unsigned Graph::verticesCount()
+unsigned Graph::verticesCount() const
 {
     return m_vertices.size();
 }
 
-unsigned Graph::edgesCount()
+unsigned Graph::edgesCount() const
 {
     unsigned counter = 0;
     for(const auto& edges : m_edges)
@@ -51,25 +51,25 @@ unsigned Graph::edgesCount()
 
 unsigned Graph::indegree(int _id) const
 {
-    if(!isValidVertex(_id)) throw std::invalid_argument("Vertex with given _id does not exist.");
+    if(!isValidVertex(_id)) throw std::invalid_argument("indegree: Vertex with given _id does not exist.");
     return m_indegree[_id];
 }
 
 unsigned Graph::outdegree(int _id) const
 {
-    if(!isValidVertex(_id)) throw std::invalid_argument("Vertex with given _id does not exist.");
+    if(!isValidVertex(_id)) throw std::invalid_argument("outdegree: Vertex with given _id does not exist.");
     return m_edges[_id].size();
 }
 
-std::vector<Vertex> Graph::getVertices()
+std::vector<Vertex> Graph::getVertices() const
 {
     return m_vertices;
 }
 
-std::list<WeightedEdge> Graph::getEdges(int _id)
+std::list<WeightedEdge> Graph::getEdges(int _id) const
 {
     if(isValidVertex(_id)) return m_edges[_id];
-    throw std::invalid_argument("Vertex with given _id does not exist.");
+    throw std::invalid_argument("getEdges: Vertex with given _id does not exist.");
 }
 
 bool Graph::isValidVertex(int _id) const
