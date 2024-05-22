@@ -20,9 +20,9 @@ public:
     {
         m_maxSize = _maxSize;
         m_size = 0;
-        m_pq = new int[m_maxSize + 1];
-        m_qp = new int[m_maxSize + 1];
-        m_keys = new T[m_maxSize + 1];
+        m_pq = std::vector<int>(m_maxSize + 1);
+        m_qp = std::vector<int>(m_maxSize + 1);
+        m_keys = std::vector<T>(m_maxSize + 1);
 
         for(int i = 0; i < m_maxSize + 1; i++)
         {
@@ -143,13 +143,6 @@ public:
         m_qp[_id] = -1;
     };
 
-    ~IndexPQ()
-    {
-        delete[] m_pq;
-        delete[] m_qp;
-        delete[] m_keys;
-    }
-
 private:
 
     bool isIndexValid(int _id) const
@@ -189,12 +182,12 @@ private:
 
 private:
 
-    int         m_size;
-    unsigned    m_maxSize;
-    int*        m_pq;
-    int*        m_qp;
-    T*          m_keys;
-    C           m_comparator;
+    int                     m_size;
+    unsigned                m_maxSize;
+    std::vector<int>        m_pq;
+    std::vector<int>        m_qp;
+    std::vector<T>          m_keys;
+    C                       m_comparator;
 };
 
 
