@@ -36,7 +36,7 @@ struct WeightedEdge
     {
         m_from = -1;
         m_to = -1;
-        m_weight = -1;
+        m_weight = std::numeric_limits<float>::infinity();
     };
 
     explicit WeightedEdge(int _fromId, int _toId, float _weight) :

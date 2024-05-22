@@ -35,7 +35,9 @@ public:
 
     bool contains(int _id) const
     {
-        if(!isIndexValid(_id)) throw std::invalid_argument("contains: Element with index _id does not exist.");
+        std::stringstream ss;
+        ss << _id;
+        if(!isIndexValid(_id)) throw std::invalid_argument("contains: Element with index " + ss.str() + " does not exist.");
         return m_qp[_id] != -1;
     };
 
@@ -46,7 +48,7 @@ public:
         std::stringstream ss;
         ss << _id;
         if(!isIndexValid(_id)) throw std::invalid_argument("insert:" + ss.str() + " Index invalid.");
-        if(contains(_id)) throw std::invalid_argument("insert: Element with index _id already exists.");
+        if(contains(_id)) throw std::invalid_argument("insert: Element with index: " + ss.str() + " already exists.");
 
         m_qp[_id] = ++m_size;
         m_pq[m_size] = _id;
@@ -83,16 +85,20 @@ public:
 
     T keyOf(int _id)
     {
-        if(!isIndexValid(_id)) throw std::invalid_argument("keyOf: Element with index _id does not exist.");
-        if(!contains(_id)) throw std::invalid_argument("keyOf: Element with index _id already exists.");
+        std::stringstream ss;
+        ss << _id;
+        if(!isIndexValid(_id)) throw std::invalid_argument("keyOf: Element with index" + ss.str() + " does not exist.");
+        if(!contains(_id)) throw std::invalid_argument("keyOf: Element with index " + ss.str() + " already exists.");
 
         return m_keys[_id];
     };
 
     void changeKey(int _id, T _key)
     {
-        if(!isIndexValid(_id)) throw std::invalid_argument("changeKey: Element with index _id does not exist.");
-        if(!contains(_id)) throw std::invalid_argument("changeKey: Element with index _id already exists.");
+        std::stringstream ss;
+        ss << _id;
+        if(!isIndexValid(_id)) throw std::invalid_argument("changeKey: Element with index " + ss.str() + " does not exist.");
+        if(!contains(_id)) throw std::invalid_argument("changeKey: Element with index " + ss.str() + " already exists.");
 
         m_keys[_id];
         swim(m_qp[_id]);
@@ -101,27 +107,33 @@ public:
 
     void decreaseKey(int _id, T _key)
     {
-        if(!isIndexValid(_id)) throw std::invalid_argument("decreaseKey: Element with index _id does not exist.");
-        if(!contains(_id)) throw std::invalid_argument("decreaseKey: Element with index _id already exists.");
+        std::stringstream ss;
+        ss << _id;
+        if(!isIndexValid(_id)) throw std::invalid_argument("decreaseKey: Element with index " + ss.str() + " does not exist.");
+        if(!contains(_id)) throw std::invalid_argument("decreaseKey: Element with index " + ss.str() + " already exists.");
 
-        if(!m_comparator(_key, m_keys[_id])) return;//throw std::invalid_argument("decreaseKey: _key is greater than or equal to the key in the priority queue.");
+        if(m_comparator(_key, m_keys[_id])) throw std::invalid_argument("decreaseKey: _key is greater than or equal to the key in the priority queue.");
         m_keys[_id] = _key;
         swim(m_qp[_id]);
     };
 
     void increaseKey(int _id, T _key)
     {
-        if(!isIndexValid(_id)) throw std::invalid_argument("increaseKey: Element with index _id does not exist.");
-        if(!contains(_id)) throw std::invalid_argument("increaseKey: Element with index _id already exists.");
+        std::stringstream ss;
+        ss << _id;
+        if(!isIndexValid(_id)) throw std::invalid_argument("increaseKey: Element with index " + ss.str() + " does not exist.");
+        if(!contains(_id)) throw std::invalid_argument("increaseKey: Element with index " + ss.str() + " already exists.");
 
-        if(!m_comparator(m_keys[_id], _key)) return;//throw std::invalid_argument("increaseKey: _key is less than or equal to the key in the priority queue.");
+        if(m_comparator(m_keys[_id], _key)) throw std::invalid_argument("increaseKey: _key is less than or equal to the key in the priority queue.");
         m_keys[_id] = _key;
         sink(m_qp[_id]);
     };
 
     void remove(int _id)
     {
-        if(!isIndexValid(_id)) throw std::invalid_argument("remove: Element with index _id does not exist.");
+        std::stringstream ss;
+        ss << _id;
+        if(!isIndexValid(_id)) throw std::invalid_argument("remove: Element with index " + ss.str() + " does not exist.");
         if(!contains(_id)) throw std::invalid_argument("remove: Element with index _id already exists.");
 
         int index = m_qp[_id];
