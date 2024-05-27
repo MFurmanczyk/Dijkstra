@@ -24,7 +24,8 @@ In order to find path user needs to:
 3. If user wants to find another path Reset action is required.
 
 ## Screenshots
-![Scr](https://github.com/MFurmanczyk/edurithm_dijkstra/assets/46996333/030f0a18-8433-43db-91ef-f5fcdd87e497)
+![Scr2](https://github.com/MFurmanczyk/edurithm_dijkstra/assets/46996333/4f711c98-98f5-45f3-8551-1b51ec438d77)
+
 
 ## Literature
 Literature and sites I used while coding this application:
