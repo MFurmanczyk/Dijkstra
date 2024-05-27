@@ -4,37 +4,34 @@
 
 #include "NearestNeighbor.h"
 #include "Dijkstra.h"
+#include "../Utils/Utils.h"
 #include <algorithm>
+#include <numeric>
 
 NearestNeighbor::NearestNeighbor(const Graph& _g, int _dim)
 {
-    std::vector<Node*> nodes;
-    int i = 0;
-    for(auto vertex : _g.getVertices())
-    {
-        Node* node = new Node(vertex.m_coords, i++, nullptr, nullptr);
-        nodes.push_back(node);
-    }
+    m_dim =         _dim;
+    m_vertices =    _g.getVertices();
+    m_guess =       -1;
+    m_minDist =     std::numeric_limits<float>::infinity();
 
-    m_dim = _dim;
+    std::vector<int> indices(m_vertices.size());
+    std::iota(indices.begin(), indices.end(), 0);
 
-    m_comparators.emplace_back([](Node* _n1, Node* _n2) {
-        return _n1->m_point.x < _n2->m_point.x;
+    m_comparators.emplace_back([this](int _i1, int _i2) {
+        return Utils::compareVectorsByX(m_vertices[_i1].m_coords, m_vertices[_i2].m_coords);
+    });
+    m_comparators.emplace_back([this](int _i1, int _i2) {
+        return Utils::compareVectorsByY(m_vertices[_i1].m_coords, m_vertices[_i2].m_coords);
     });
 
-    m_comparators.emplace_back([](Node* _n1, Node* _n2) {
-        return _n1->m_point.y < _n2->m_point.y;
-    });
-
-    p_root = buildTree(nodes, 0);
+    p_root = buildTree(indices, 0);
 }
 
-NearestNeighbor::Node *NearestNeighbor::getNearest(const sf::Vector2f& _point)
+int NearestNeighbor::getNearest(const sf::Vector2f& _point)
 {
-    float minDist = std::numeric_limits<float>::max();
-    Node* guess;
-    getNearest(p_root, _point, guess, minDist, 0);
-    return guess;
+    getNearest(p_root, _point, 0);
+    return m_guess;
 }
 
 NearestNeighbor::~NearestNeighbor()
@@ -42,51 +39,57 @@ NearestNeighbor::~NearestNeighbor()
     preDestruct(p_root);
 }
 
-NearestNeighbor::Node *NearestNeighbor::buildTree(std::vector<Node*> _nodes, int _depth)
+NearestNeighbor::Node *NearestNeighbor::buildTree(std::vector<int> _indices, int _depth)
 {
-    if(_nodes.begin() == (_nodes.end() - 1)) return _nodes.front();
-    if(_nodes.empty()) return nullptr;
+    if(_indices.empty()) return nullptr;
+    else if(_indices.size() == 1) return new Node(_indices[0], nullptr, nullptr);
 
-    std::stable_sort(_nodes.begin(), _nodes.end(), m_comparators[_depth % m_dim]);
+    std::stable_sort(_indices.begin(), _indices.end(), m_comparators[_depth % m_dim]);
 
-    auto node = _nodes[_nodes.size() / 2];
+    Node* node = new Node(_indices[_indices.size() / 2], nullptr, nullptr);
 
-    node->p_left = buildTree(std::vector<Node*>(_nodes.begin(), _nodes.begin() + _nodes.size() / 2), _depth + 1);
-    node->p_right = buildTree(std::vector<Node*>(_nodes.begin() + _nodes.size() / 2 + 1, _nodes.end()), _depth + 1);
+    node->p_left =  buildTree(std::vector<int>(_indices.begin(), _indices.begin() + _indices.size() / 2), _depth + 1);
+    node->p_right = buildTree(std::vector<int>(_indices.begin() + _indices.size() / 2 + 1, _indices.end()), _depth + 1);
 
     return node;
 }
 
-void NearestNeighbor::getNearest(Node *_node, const sf::Vector2f &_point, Node *&_guess, float &_minDist, int _depth)
+void NearestNeighbor::getNearest(Node* _node, const sf::Vector2f &_point, int _depth)
 {
     if(!_node) return;
-    sf::Vector2f nodePos = _node->m_point;
 
-    float dist = distance(_point, nodePos);
+    float dist = distance(_point, m_vertices[_node->m_index].m_coords);
 
-    if(dist < _minDist)
+    if(dist < m_minDist)
     {
-        _minDist = dist;
-        _guess = _node;
+        m_minDist = dist;
+        m_guess = _node->m_index;
     }
 
-    std::unique_ptr<Node> pointPtr = std::make_unique<Node>(_point, -1, nullptr, nullptr);
-    float difference = _depth % m_dim == 0 ? std::abs(_point.x - nodePos.x) : std::abs(_point.y - nodePos.y);
-    if(m_comparators[_depth % m_dim](pointPtr.get(), _node))
-    {
-        getNearest(_node->p_left, _point, _guess, _minDist, _depth + 1);
+    float difference =
+            _depth % m_dim == 0 ?
+            std::abs(_point.x - m_vertices[_node->m_index].m_coords.x) :
+            std::abs(_point.y - m_vertices[_node->m_index].m_coords.y);
 
-        if(difference < _minDist)
-        {
-            getNearest(_node->p_right, _point, _guess, _minDist, _depth + 1);
-        }
+    std::function<int(sf::Vector2f, sf::Vector2f)> comparer =
+            _depth % m_dim == 0 ?
+            Utils::compareVectorsByX :
+            Utils::compareVectorsByY;
+
+    if(comparer(_point, m_vertices[_node->m_index].m_coords) < 0)
+    {
+       getNearest(_node->p_left, _point, _depth + 1);
+       if(difference < m_minDist)
+       {
+           getNearest(_node->p_right, _point, _depth + 1);
+       }
     }
     else
     {
-        getNearest(_node->p_right, _point, _guess, _minDist, _depth + 1);
-        if(difference < _minDist)
+        getNearest(_node->p_right, _point, _depth + 1);
+        if(difference < m_minDist)
         {
-            getNearest(_node->p_left, _point, _guess, _minDist, _depth + 1);
+            getNearest(_node->p_left, _point, _depth + 1);
         }
     }
 }

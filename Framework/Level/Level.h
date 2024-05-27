@@ -78,6 +78,7 @@ private:
     ///Underlying navigation graph.
     Graph                                   m_graph;
     Dijkstra                                m_paths;
+    NearestNeighbor                         m_neighbors;
 };
 
 #endif //EDURITHM_DIJKSTRA_LEVEL_H

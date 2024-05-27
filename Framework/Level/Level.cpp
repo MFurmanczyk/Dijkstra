@@ -130,11 +130,12 @@ void Level::setStartPoint(const sf::Vector2f &_position)
     {
         resetDestinationPoints();
         NearestNeighbor nn(m_graph, 2);
-        auto node = nn.getNearest(_position);
-        if (!node) return;
-        spawnActor<GraphPoint>(node->m_point);
+        auto nearest = nn.getNearest(_position);
+        auto vertices = m_graph.getVertices();
+        if (nearest == -1) return;
+        spawnActor<GraphPoint>(vertices[nearest].m_coords);
         spawnActor<DestinationPoint>(_position);
-        m_paths = Dijkstra(m_graph, node->m_index);
+        m_paths = Dijkstra(m_graph, nearest);
         b_isStartInitialized = true;
     }
 }
@@ -144,14 +145,14 @@ void Level::setDestinationPoint(const sf::Vector2f &_position)
     if(b_isStartInitialized && !b_isEndInitialized)
     {
         NearestNeighbor nn(m_graph, 2);
-        auto node = nn.getNearest(_position);
-        auto path = m_paths.pathTo(node->m_index);
-
-        spawnActor<GraphPoint>(node->m_point);
+        auto nearest = nn.getNearest(_position);
+        auto path = m_paths.pathTo(nearest);
+        auto vertices = m_graph.getVertices();
+        spawnActor<GraphPoint>(vertices[nearest].m_coords);
         spawnActor<DestinationPoint>(_position);
 
         auto pathActor = spawnActor<Path>(sf::Vector2f(0, 0));
-        auto vertices = m_graph.getVertices();
+
         while (!path.empty()) {
             pathActor->addPoint(vertices[path.top().m_from].m_coords);
             pathActor->addPoint(vertices[path.top().m_to].m_coords);
