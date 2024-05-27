@@ -19,10 +19,10 @@ NearestNeighbor::NearestNeighbor(const Graph& _g, int _dim)
     std::iota(indices.begin(), indices.end(), 0);
 
     m_comparators.emplace_back([this](int _i1, int _i2) {
-        return Utils::compareVectorsByX(m_vertices[_i1].m_coords, m_vertices[_i2].m_coords);
+        return m_vertices[_i1].m_coords.x < m_vertices[_i2].m_coords.x;
     });
     m_comparators.emplace_back([this](int _i1, int _i2) {
-        return Utils::compareVectorsByY(m_vertices[_i1].m_coords, m_vertices[_i2].m_coords);
+        return m_vertices[_i1].m_coords.y < m_vertices[_i2].m_coords.y;
     });
 
     p_root = buildTree(indices, 0);
@@ -57,13 +57,12 @@ NearestNeighbor::Node *NearestNeighbor::buildTree(std::vector<int> _indices, int
 void NearestNeighbor::getNearest(Node* _node, const sf::Vector2f &_point, int _depth)
 {
     if(!_node) return;
-
     float dist = distance(_point, m_vertices[_node->m_index].m_coords);
 
     if(dist < m_minDist)
     {
         m_minDist = dist;
-        m_guess = _node->m_index;
+        m_guess =   _node->m_index;
     }
 
     float difference =
