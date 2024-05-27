@@ -40,6 +40,8 @@ add_executable(edurithm_dijkstra main.cpp
         Framework/Level/Path.cpp
         Framework/Level/Path.h
         Framework/Algorithm/IndexPQ.h
+        Framework/Algorithm/Dijkstra.h
+        Framework/Algorithm/Dijkstra.cpp
 )
 target_link_libraries(edurithm_dijkstra PRIVATE sfml-graphics)
 target_compile_features(edurithm_dijkstra PRIVATE cxx_std_17)

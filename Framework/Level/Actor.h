@@ -33,10 +33,8 @@ public:
     /// @return position of main Drawable component
     virtual sf::Vector2f getPosition() const = 0;
 
-    ///Setter by reference.
-    virtual void setPositionByRef(sf::Vector2f& _position) = 0;
     ///Setter by value.
-    virtual void setPosition(sf::Vector2f _position) = 0;
+    virtual void setPosition(const sf::Vector2f& _position) = 0;
 
     ///Runs every frame and updates state of the object.
     virtual void update(float _deltaTime) = 0;

@@ -17,21 +17,22 @@ sf::Vector2f Path::getPosition() const
     else return m_shape[0].position;
 }
 
-void Path::setPositionByRef(sf::Vector2f &_position)
+
+
+void Path::setPosition(const sf::Vector2f& _position)
 {
     //do nothing
 }
 
-void Path::setPosition(sf::Vector2f _position)
-{
-    //do nothing
-}
-
-void Path::addPoint(sf::Vector2f &_point)
+void Path::addPoint(const sf::Vector2f &_point)
 {
     m_shape.append(sf::Vertex(_point, sf::Color::Blue));
 }
 
+void Path::addPoint(const sf::Vector2f &_point, const sf::Color& _color)
+{
+    m_shape.append(sf::Vertex(_point, _color));
+}
 void Path::update(float _deltaTime)
 {
     //Static object
@@ -40,5 +41,7 @@ void Path::update(float _deltaTime)
 sf::Drawable &Path::getDrawable() {
     return m_shape;
 }
+
+
 
 

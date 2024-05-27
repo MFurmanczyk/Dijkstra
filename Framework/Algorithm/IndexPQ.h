@@ -20,15 +20,9 @@ public:
     {
         m_maxSize = _maxSize;
         m_size = 0;
-        m_pq = std::vector<int>(m_maxSize + 1);
-        m_qp = std::vector<int>(m_maxSize + 1);
-        m_keys = std::vector<T>(m_maxSize + 1);
-
-        for(int i = 0; i < m_maxSize + 1; i++)
-        {
-            m_pq[i] = -1;
-            m_qp[i] = -1;
-        }
+        m_pq = std::vector<int>(m_maxSize + 1, -1);
+        m_index = std::vector<int>(m_maxSize, -1);
+        m_keys = std::vector<T>(m_maxSize);
     };
 
     bool isEmpty() const { return m_size == 0; };
@@ -38,7 +32,7 @@ public:
         std::stringstream ss;
         ss << _id;
         if(!isIndexValid(_id)) throw std::invalid_argument("contains: Element with index " + ss.str() + " does not exist.");
-        return m_qp[_id] != -1;
+        return m_index[_id] != -1;
     };
 
     int size() const { return m_size; };
@@ -50,59 +44,24 @@ public:
         if(!isIndexValid(_id)) throw std::invalid_argument("insert:" + ss.str() + " Index invalid.");
         if(contains(_id)) throw std::invalid_argument("insert: Element with index: " + ss.str() + " already exists.");
 
-        m_qp[_id] = ++m_size;
+        m_index[_id] = ++m_size;
         m_pq[m_size] = _id;
         m_keys[_id] = _key;
 
         swim(m_size);
-
-    };
-
-    int topIndex()
-    {
-        if(m_size == 0) throw std::out_of_range("topIndex: Empty queue");
-        return m_pq[1];
-    };
-
-    T topKey()
-    {
-        if(m_size == 0) throw std::out_of_range("topKey: Empty queue");
-        return m_keys[m_pq[1]];
     };
 
     int removeTop()
     {
-        if(m_size == 0) throw std::out_of_range("rwmoveTop: Empty queue");
-        int min = m_pq[1];
+        if(m_size == 0) throw std::out_of_range("removeTop: Empty queue");
+        int top = m_pq[1];
         swap(1, m_size--);
         sink(1);
 
-        m_qp[min] = -1;
+        m_index[top] = -1;
         m_pq[m_size + 1] = -1;
 
-        return min;
-    };
-
-    T keyOf(int _id)
-    {
-        std::stringstream ss;
-        ss << _id;
-        if(!isIndexValid(_id)) throw std::invalid_argument("keyOf: Element with index" + ss.str() + " does not exist.");
-        if(!contains(_id)) throw std::invalid_argument("keyOf: Element with index " + ss.str() + " already exists.");
-
-        return m_keys[_id];
-    };
-
-    void changeKey(int _id, T _key)
-    {
-        std::stringstream ss;
-        ss << _id;
-        if(!isIndexValid(_id)) throw std::invalid_argument("changeKey: Element with index " + ss.str() + " does not exist.");
-        if(!contains(_id)) throw std::invalid_argument("changeKey: Element with index " + ss.str() + " already exists.");
-
-        m_keys[_id];
-        swim(m_qp[_id]);
-        sink(m_qp[_id]);
+        return top;
     };
 
     void decreaseKey(int _id, T _key)
@@ -114,40 +73,15 @@ public:
 
         if(m_comparator(_key, m_keys[_id])) throw std::invalid_argument("decreaseKey: _key is greater than or equal to the key in the priority queue.");
         m_keys[_id] = _key;
-        swim(m_qp[_id]);
+        swim(m_index[_id]);
     };
 
-    void increaseKey(int _id, T _key)
-    {
-        std::stringstream ss;
-        ss << _id;
-        if(!isIndexValid(_id)) throw std::invalid_argument("increaseKey: Element with index " + ss.str() + " does not exist.");
-        if(!contains(_id)) throw std::invalid_argument("increaseKey: Element with index " + ss.str() + " already exists.");
-
-        if(m_comparator(m_keys[_id], _key)) throw std::invalid_argument("increaseKey: _key is less than or equal to the key in the priority queue.");
-        m_keys[_id] = _key;
-        sink(m_qp[_id]);
-    };
-
-    void remove(int _id)
-    {
-        std::stringstream ss;
-        ss << _id;
-        if(!isIndexValid(_id)) throw std::invalid_argument("remove: Element with index " + ss.str() + " does not exist.");
-        if(!contains(_id)) throw std::invalid_argument("remove: Element with index _id already exists.");
-
-        int index = m_qp[_id];
-        swap(index, m_size--);
-        swim(index);
-        sink(index);
-        m_qp[_id] = -1;
-    };
 
 private:
 
     bool isIndexValid(int _id) const
     {
-        if(_id >= 0) return true;
+        if(_id >= 0 && _id < m_maxSize) return true;
         return false;
     };
 
@@ -176,8 +110,8 @@ private:
         int swap = m_pq[_id1];
         m_pq[_id1] = m_pq[_id2];
         m_pq[_id2] = swap;
-        m_qp[m_pq[_id1]] = _id1;
-        m_qp[m_pq[_id2]] = _id2;
+        m_index[m_pq[_id1]] = _id1;
+        m_index[m_pq[_id2]] = _id2;
     };
 
 private:
@@ -185,7 +119,7 @@ private:
     int                     m_size;
     unsigned                m_maxSize;
     std::vector<int>        m_pq;
-    std::vector<int>        m_qp;
+    std::vector<int>        m_index; //pq index - m_pq[m_index[i]] = i //i == 4, pq[1] = i -> m_keys[pq[1]] = m_keys[i]
     std::vector<T>          m_keys;
     C                       m_comparator;
 };

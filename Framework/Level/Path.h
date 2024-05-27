@@ -18,14 +18,14 @@ public:
     ~Path() override = default;
 
     sf::Vector2f getPosition() const override;
-    void setPositionByRef(sf::Vector2f& _position) override;
-    void setPosition(sf::Vector2f _position) override;
+    void setPosition(const sf::Vector2f& _position) override;
 
     void update(float _deltaTime) override;
 
     sf::Drawable &getDrawable() override;
 
-    virtual void addPoint(sf::Vector2f& _point);
+    virtual void addPoint(const sf::Vector2f& _point);
+    virtual void addPoint(const sf::Vector2f& _point, const sf::Color& _color);
 
 private:
 
