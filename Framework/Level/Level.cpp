@@ -6,9 +6,7 @@
 #include "Tiles/GrassTile.h"
 #include "Tiles/RoadTile.h"
 #include "Points/DestinationPoint.h"
-#include "../Algorithm/Dijkstra.h"
 #include "Path.h"
-#include "../Algorithm/NearestNeighbor.h"
 #include <fstream>
 #include <sstream>
 
@@ -32,20 +30,6 @@ void Level::loadFromFile(const std::string& _mapFilename, const std::string& _co
 {
     loadMap(_mapFilename, _windowSize);
     loadConnections(_connectionFilename);
-
-    /*Dijkstra d(m_graph, 12);
-    auto p = d.pathTo(20);
-    ;
-    auto a = spawnActor<Path>(sf::Vector2f(0,0));
-    auto v = m_graph.getVertices();
-    while(!p.empty())
-    {
-        a->addPoint(v[p.top().m_to].m_coords);
-        a->addPoint(v[p.top().m_from].m_coords);
-        p.pop();
-    }*/
-
-    NearestNeighbor nn(m_graph, 2);
 }
 
 void Level::loadMap(const std::string &_mapFilename, const sf::Vector2u &_windowSize) {
@@ -90,33 +74,40 @@ void Level::loadConnections(const std::string &_connectionFilename) {
 
 void Level::processRow(const sf::Vector2f& tileSize, const std::string& line, int row) {
     int col = 0;
-    for(char ch : line)
-    {
+    for (char ch: line) {
         //calculate tile position
-        auto position = sf::Vector2f(tileSize.x * (1.f/2.f + col), tileSize.y * (1.f/2.f + row));
+        auto position = sf::Vector2f(tileSize.x * (1.f / 2.f + col), tileSize.y * (1.f / 2.f + row));
         int type = ch - '0';
-        if(type == 0)
-        {
+        if (type == 0) {
             //Grass
-            auto tile= spawnActor<GrassTile>(position);
+            auto tile = spawnActor<GrassTile>(position);
             tile->setSize(tileSize);
-        }
-        else if(type == 1)
-        {
+        } else if (type == 1) {
             //Road
-            auto tile= spawnActor<RoadTile>(position);
+            auto tile = spawnActor<RoadTile>(position);
             tile->setSize(tileSize);
-        }
-        else if(type == 2)
-        {
+        } else if (type == 2) {
             //Intersection
-            auto tile= spawnActor<RoadTile>(position);
+            auto tile = spawnActor<RoadTile>(position);
             tile->setSize(tileSize);
 
             m_graph.addVertex(position);
         }
         col++;
     }
+}
+
+void Level::addActor(const std::shared_ptr<Actor>& _actor)
+{
+    m_actors.push_back(_actor);
+}
+
+void Level::reset()
+{
+    b_isStartInitialized = false;
+    b_isEndInitialized = false;
+    resetDestinationPoints();
+    resetPath();
 }
 
 void Level::resetDestinationPoints()
@@ -126,19 +117,46 @@ void Level::resetDestinationPoints()
     erase_if(m_actors, predicate);
 }
 
-void Level::addActor(const std::shared_ptr<Actor>& _actor)
+void Level::resetPath()
 {
-    m_actors.push_back(_actor);
+    auto predicate = [](const std::shared_ptr<Actor>& ptr)
+    { return dynamic_pointer_cast<Path>(ptr) != nullptr; };
+    erase_if(m_actors, predicate);
 }
 
-void Level::removeActor(Actor* _actor)
+void Level::setStartPoint(const sf::Vector2f &_position)
 {
-    if (_actor)
+    if(!b_isEndInitialized)
     {
-        auto it = std::find(m_actors.begin(), m_actors.end(), std::shared_ptr<Actor>(_actor));
-        if (it != m_actors.end())
-        {
-            m_actors.erase(it);
+        resetDestinationPoints();
+        NearestNeighbor nn(m_graph, 2);
+        auto node = nn.getNearest(_position);
+        if (!node) return;
+        spawnActor<GraphPoint>(node->m_point);
+        spawnActor<DestinationPoint>(_position);
+        m_paths = Dijkstra(m_graph, node->m_index);
+        b_isStartInitialized = true;
+    }
+}
+
+void Level::setDestinationPoint(const sf::Vector2f &_position)
+{
+    if(b_isStartInitialized && !b_isEndInitialized)
+    {
+        NearestNeighbor nn(m_graph, 2);
+        auto node = nn.getNearest(_position);
+        auto path = m_paths.pathTo(node->m_index);
+
+        spawnActor<GraphPoint>(node->m_point);
+        spawnActor<DestinationPoint>(_position);
+
+        auto pathActor = spawnActor<Path>(sf::Vector2f(0, 0));
+        auto vertices = m_graph.getVertices();
+        while (!path.empty()) {
+            pathActor->addPoint(vertices[path.top().m_from].m_coords);
+            pathActor->addPoint(vertices[path.top().m_to].m_coords);
+            path.pop();
         }
+        b_isEndInitialized = true;
     }
 }

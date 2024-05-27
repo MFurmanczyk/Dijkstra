@@ -16,6 +16,7 @@ class IndexPQ
 {
 public:
 
+    IndexPQ() = default;
     IndexPQ(unsigned _maxSize)
     {
         m_maxSize = _maxSize;

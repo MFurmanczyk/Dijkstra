@@ -42,6 +42,7 @@ class Dijkstra
 {
 public:
 
+    Dijkstra() = default;
     Dijkstra(const Graph& _g, int _from);
 
     float distanceTo(int _to);

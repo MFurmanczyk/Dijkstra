@@ -8,6 +8,7 @@
 KeyboardManager::KeyboardManager()
 {
     addMapping(sf::Keyboard::Escape, &Application::closeApplication);
+    addMapping(sf::Keyboard::R, &Application::resetLevel);
 }
 
 void KeyboardManager::invokeMapping(sf::Event::KeyEvent _keyEvent)

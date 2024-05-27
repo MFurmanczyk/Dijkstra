@@ -12,6 +12,9 @@
 #include "../Algorithm/Graph.h"
 #include "../Algorithm/NearestNeighbor.h"
 #include "Points/GraphPoint.h"
+#include "../Algorithm/Dijkstra.h"
+#include "Points/DestinationPoint.h"
+#include "Path.h"
 
 /**
  * This class is responsible for storing and managing all object visible on the screen.
@@ -44,23 +47,16 @@ public:
         return dynamic_pointer_cast<T>(actor);
     };
 
-    int findNearestNeighborIndex(const sf::Vector2f& _position)
-    {
-        NearestNeighbor nn(m_graph, 2);
-        auto node = nn.getNearest(_position);
-        spawnActor<GraphPoint>(node->m_point);
-        return node ? node->m_index : -1;
-    };
+    void setStartPoint(const sf::Vector2f& _position);
 
-    ///
-    void resetDestinationPoints();
+    void setDestinationPoint(const sf::Vector2f& _position);
+
+    void reset();
 
 private:
 
     ///Adds actor to <m_actors> vector making it usable by the level.
     virtual void addActor(const std::shared_ptr<Actor>& _actor);
-    ///Removes actor from the level.
-    virtual void removeActor(Actor* _actor);
 
     ///Loads and creates map.
     void loadMap(const std::string &_mapFilename, const sf::Vector2u &_windowSize);
@@ -69,14 +65,19 @@ private:
     ///Creates tiles and graph verticesCount for given row.
     void processRow(const sf::Vector2f& tileSize, const std::string &line, int row);
 
+    ///Reset methods
+    void resetDestinationPoints();
+    void resetPath();
 
 private:
 
+    bool                                    b_isStartInitialized;
+    bool                                    b_isEndInitialized;
     ///Stores all Actors present in the level.
-    std::vector<std::shared_ptr<Actor>> m_actors;
+    std::vector<std::shared_ptr<Actor>>     m_actors;
     ///Underlying navigation graph.
-    Graph                               m_graph;
-
+    Graph                                   m_graph;
+    Dijkstra                                m_paths;
 };
 
 #endif //EDURITHM_DIJKSTRA_LEVEL_H

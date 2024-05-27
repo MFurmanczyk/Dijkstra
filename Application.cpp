@@ -85,18 +85,22 @@ Application::~Application()
     }
 }
 
-void Application::leftClick(sf::Vector2i& _position)
+void Application::leftClick(const sf::Vector2i& _position)
 {
-    sf::Vector2f positionF(_position);
-    auto point = Level::spawnActor<DestinationPoint>(m_level, positionF);
+    m_level.setStartPoint(sf::Vector2f(_position));
 }
 
-void Application::rightClick(sf::Vector2i& _position)
+void Application::rightClick(const sf::Vector2i& _position)
 {
-    m_level.resetDestinationPoints();
+    m_level.setDestinationPoint(sf::Vector2f(_position));
 }
 
 void Application::closeApplication()
 {
     m_currentState = State::Ended;
+}
+
+void Application::resetLevel()
+{
+    m_level.reset();
 }

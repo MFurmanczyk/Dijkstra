@@ -35,11 +35,13 @@ public:
 public:
     //inputs
     ///Called once LMB is clicked.
-    void leftClick(sf::Vector2i& _position);
+    void leftClick(const sf::Vector2i& _position);
     ///Called once RMB is clicked.
-    void rightClick(sf::Vector2i& _position);
+    void rightClick(const sf::Vector2i& _position);
     ///Called once Escape is pressed.
     void closeApplication();
+    ///Called once R is pressed
+    void resetLevel();
 
     //BEGIN: Singleton
 public:
