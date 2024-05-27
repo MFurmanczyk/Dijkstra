@@ -29,6 +29,12 @@ public:
 
     ///Loads level from given file and ceates underlying connection graph with respect to window size.
     virtual void loadFromFile(const std::string& _mapFilename, const std::string& _connectionFilename, const sf::Vector2u& _windowSize);
+    ///Sets start vertex for SP algorithm
+    void setStartPoint(const sf::Vector2f& _position);
+    ///Sets end vertex for SP algorithm
+    void setDestinationPoint(const sf::Vector2f& _position);
+    ///Resets states of SP algorithm and level
+    void reset();
 
     ///Spawns Actor instance in given level and in the given position.
     template<ActorBase T>
@@ -46,12 +52,6 @@ public:
         addActor(actor);
         return dynamic_pointer_cast<T>(actor);
     };
-
-    void setStartPoint(const sf::Vector2f& _position);
-
-    void setDestinationPoint(const sf::Vector2f& _position);
-
-    void reset();
 
 private:
 
@@ -78,7 +78,6 @@ private:
     ///Underlying navigation graph.
     Graph                                   m_graph;
     Dijkstra                                m_paths;
-    NearestNeighbor                         m_neighbors;
 };
 
 #endif //EDURITHM_DIJKSTRA_LEVEL_H

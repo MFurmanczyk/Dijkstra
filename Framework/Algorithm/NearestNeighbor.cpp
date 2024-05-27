@@ -19,10 +19,10 @@ NearestNeighbor::NearestNeighbor(const Graph& _g, int _dim)
     std::iota(indices.begin(), indices.end(), 0);
 
     m_comparators.emplace_back([this](int _i1, int _i2) {
-        return m_vertices[_i1].m_coords.x < m_vertices[_i2].m_coords.x;
+        return Utils::compareVectorsByX(m_vertices[_i1].m_coords, m_vertices[_i2].m_coords) < 0;
     });
     m_comparators.emplace_back([this](int _i1, int _i2) {
-        return m_vertices[_i1].m_coords.y < m_vertices[_i2].m_coords.y;
+        return Utils::compareVectorsByY(m_vertices[_i1].m_coords, m_vertices[_i2].m_coords) < 0;
     });
 
     p_root = buildTree(indices, 0);
