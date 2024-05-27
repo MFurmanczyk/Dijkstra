@@ -24,13 +24,10 @@ public:
     ///@return size of the main Drawable component.
     virtual sf::Vector2f getSize() const;
     ///Setter by reference.
-    virtual void setSizeByRef(sf::Vector2f& _size);
-    ///Setter by value.
-    virtual void setSize(sf::Vector2f _size);
+    virtual void setSize(const sf::Vector2f& _size);
 
     sf::Vector2f getPosition() const override;
-    void setPositionByRef(sf::Vector2f& _position) override;
-    void setPosition(sf::Vector2f _position) override;
+    void setPosition(const sf::Vector2f& _position) override;
 
     void update(float _deltaTime) override = 0;
 

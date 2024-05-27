@@ -6,6 +6,9 @@
 #include "Tiles/GrassTile.h"
 #include "Tiles/RoadTile.h"
 #include "Points/DestinationPoint.h"
+#include "../Algorithm/Dijkstra.h"
+#include "Path.h"
+#include "../Algorithm/NearestNeighbor.h"
 #include <fstream>
 #include <sstream>
 
@@ -25,10 +28,24 @@ void Level::draw(sf::RenderTarget& _target)
     }
 }
 
-void Level::loadFromFile(std::string _mapFilename, std::string _connectionFilename, sf::Vector2u _windowSize)
+void Level::loadFromFile(const std::string& _mapFilename, const std::string& _connectionFilename, const sf::Vector2u& _windowSize)
 {
     loadMap(_mapFilename, _windowSize);
     loadConnections(_connectionFilename);
+
+    /*Dijkstra d(m_graph, 12);
+    auto p = d.pathTo(20);
+    ;
+    auto a = spawnActor<Path>(sf::Vector2f(0,0));
+    auto v = m_graph.getVertices();
+    while(!p.empty())
+    {
+        a->addPoint(v[p.top().m_to].m_coords);
+        a->addPoint(v[p.top().m_from].m_coords);
+        p.pop();
+    }*/
+
+    NearestNeighbor nn(m_graph, 2);
 }
 
 void Level::loadMap(const std::string &_mapFilename, const sf::Vector2u &_windowSize) {
@@ -71,9 +88,9 @@ void Level::loadConnections(const std::string &_connectionFilename) {
     connectionFile.close();
 }
 
-void Level::processRow(sf::Vector2f& tileSize, std::string& line, int row) {
+void Level::processRow(const sf::Vector2f& tileSize, const std::string& line, int row) {
     int col = 0;
-    for(char& ch : line)
+    for(char ch : line)
     {
         //calculate tile position
         auto position = sf::Vector2f(tileSize.x * (1.f/2.f + col), tileSize.y * (1.f/2.f + row));
@@ -82,19 +99,19 @@ void Level::processRow(sf::Vector2f& tileSize, std::string& line, int row) {
         {
             //Grass
             auto tile= spawnActor<GrassTile>(position);
-            tile->setSizeByRef(tileSize);
+            tile->setSize(tileSize);
         }
         else if(type == 1)
         {
             //Road
             auto tile= spawnActor<RoadTile>(position);
-            tile->setSizeByRef(tileSize);
+            tile->setSize(tileSize);
         }
         else if(type == 2)
         {
             //Intersection
             auto tile= spawnActor<RoadTile>(position);
-            tile->setSizeByRef(tileSize);
+            tile->setSize(tileSize);
 
             m_graph.addVertex(position);
         }
@@ -105,11 +122,11 @@ void Level::processRow(sf::Vector2f& tileSize, std::string& line, int row) {
 void Level::resetDestinationPoints()
 {
     auto predicate = [](const std::shared_ptr<Actor>& ptr)
-            { return dynamic_pointer_cast<DestinationPoint>(ptr) != nullptr; };
+            { return dynamic_pointer_cast<PointBase>(ptr) != nullptr; };
     erase_if(m_actors, predicate);
 }
 
-void Level::addActor(std::shared_ptr<Actor>& _actor)
+void Level::addActor(const std::shared_ptr<Actor>& _actor)
 {
     m_actors.push_back(_actor);
 }

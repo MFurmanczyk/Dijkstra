@@ -21,8 +21,7 @@ public:
     ~PointBase() override = default;
 
     sf::Vector2f getPosition() const override;
-    void setPositionByRef(sf::Vector2f &_position) override;
-    void setPosition(sf::Vector2f _position) override;
+    void setPosition(const sf::Vector2f &_position) override;
 
     ///Getter for color.
     ///@return color of main Drawable component.

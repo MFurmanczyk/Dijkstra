@@ -15,12 +15,7 @@ sf::Vector2f PointBase::getPosition() const
     return m_shape.getPosition();
 }
 
-void PointBase::setPositionByRef(sf::Vector2f &_position)
-{
-    m_shape.setPosition(_position);
-}
-
-void PointBase::setPosition(sf::Vector2f _position)
+void PointBase::setPosition(const sf::Vector2f& _position)
 {
     m_shape.setPosition(_position);
 }
