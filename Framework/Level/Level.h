@@ -44,6 +44,14 @@ public:
         return dynamic_pointer_cast<T>(actor);
     };
 
+    int findNearestNeighborIndex(const sf::Vector2f& _position)
+    {
+        NearestNeighbor nn(m_graph, 2);
+        auto node = nn.getNearest(_position);
+        spawnActor<GraphPoint>(node->m_point);
+        return node ? node->m_index : -1;
+    };
+
     ///
     void resetDestinationPoints();
 
